@@ -1,0 +1,11 @@
+# Lean and Lake build output
+/.lake/
+*.olean
+*.ilean
+*.c
+
+# Editor and operating system files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

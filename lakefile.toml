@@ -1,0 +1,10 @@
+name = "miniLean"
+version = "0.1.0"
+defaultTargets = ["minilean"]
+
+[[lean_lib]]
+name = "MiniLean"
+
+[[lean_exe]]
+name = "minilean"
+root = "Main"
