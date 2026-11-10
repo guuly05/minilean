@@ -28,4 +28,10 @@ def swapConjunction : Proof :=
 #eval check (.imp (.imp p q) (.imp p q)) modusPonens
 #eval check (.imp (.and p q) (.and q p)) swapConjunction
 
+/-- A rejected term reports its missing local assumption. -/
+def missingHypothesis : Proof := .hypothesis q
+
+#eval inferDetailed [] missingHypothesis
+#eval checkDetailed (.imp q q) identity
+
 end MiniLean.Examples
