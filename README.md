@@ -32,6 +32,8 @@ programming project and as a way to study how proof assistants are structured.
   elimination, and elimination from falsehood.
 - A recursive checker that infers the conclusion of a proof term or rejects
   the term with `none`.
+- A detailed checker API that reports why an inference or goal check failed,
+  while retaining the original `Option` and `Bool` convenience functions.
 - A `check` function that accepts a proof only when its inferred conclusion
   matches the requested theorem.
 - Example proof terms for identity, modus ponens, and conjunction swapping.
@@ -51,6 +53,11 @@ lake exe minilean
 
 The examples in `MiniLean/Examples.lean` also contain `#eval` commands that
 evaluate representative proof checks during compilation.
+
+For diagnostics, use `inferDetailed` or `checkDetailed`. For example,
+`inferDetailed [] (.hypothesis (.atom 1))` returns a `missingAssumption`
+error. The simpler `infer` and `check` functions remain available when only
+acceptance or rejection is needed.
 
 ## A first example
 
