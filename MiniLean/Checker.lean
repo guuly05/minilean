@@ -32,7 +32,7 @@ def inferDetailed (ctx : Context) : Proof → Except CheckError Formula
   | .hypothesis p =>
       if ctx.contains p then .ok p else .error (.missingAssumption p)
   | .impIntro assumption body => do
-      let conclusion ← inferDetailed (assumption :: ctx) body
+      let conclusion ← inferDetailed (ctx.extend assumption) body
       pure (.imp assumption conclusion)
   | .impElim function argument => do
       let functionType ← inferDetailed ctx function
@@ -68,8 +68,8 @@ def inferDetailed (ctx : Context) : Proof → Except CheckError Formula
             throw (.caseAssumptionMismatch "left" left leftAssumption)
           if right != rightAssumption then
             throw (.caseAssumptionMismatch "right" right rightAssumption)
-          let leftResult ← inferDetailed (leftAssumption :: ctx) leftCase
-          let rightResult ← inferDetailed (rightAssumption :: ctx) rightCase
+          let leftResult ← inferDetailed (ctx.extend leftAssumption) leftCase
+          let rightResult ← inferDetailed (ctx.extend rightAssumption) rightCase
           if leftResult == rightResult then .ok leftResult
           else .error (.caseResultMismatch leftResult rightResult)
       | actual => .error (.expectedDisjunction actual)
