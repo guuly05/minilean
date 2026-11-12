@@ -17,10 +17,23 @@ inductive Formula where
   | or : Formula → Formula → Formula
   deriving DecidableEq, Repr
 
+/-- Negation is represented by implication to falsehood. -/
+def Formula.neg (p : Formula) : Formula := .imp p .falsum
+
+/-- A biconditional is represented by implications in both directions. -/
+def Formula.iff (p q : Formula) : Formula :=
+  .and (.imp p q) (.imp q p)
+
 instance : Inhabited Formula := ⟨Formula.falsum⟩
 
 /-- A local context is a list of assumptions. -/
 abbrev Context := List Formula
+
+/-- Add an assumption at the front of a context. Duplicate assumptions are
+permitted; lookup is membership-based, so duplicates do not change which
+hypotheses can be used. -/
+def Context.extend (ctx : Context) (assumption : Formula) : Context :=
+  assumption :: ctx
 
 /-- Proof terms form a small natural-deduction language. -/
 inductive Proof where
