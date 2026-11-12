@@ -59,6 +59,13 @@ For diagnostics, use `inferDetailed` or `checkDetailed`. For example,
 error. The simpler `infer` and `check` functions remain available when only
 acceptance or rejection is needed.
 
+Negation and biconditional are abbreviations in the core: `p.neg` means
+`p → false`, and `p.iff q` means `(p → q) ∧ (q → p)`. They introduce no
+additional proof rules; proofs use the existing implication and conjunction
+constructors. Contexts are lists. Adding an assumption prepends it, duplicates
+are allowed, and lookup succeeds when the requested formula occurs anywhere in
+the list. Repeated assumptions do not change proof acceptance.
+
 ## A first example
 
 Formulas and proof terms are currently written directly as Lean values. This
@@ -105,7 +112,7 @@ The stages below are deliberately ordered so each one leaves MiniLean in a
 usable state. A stage is complete when its listed behavior is implemented,
 documented, and covered by examples or properties.
 
-### Stage 0 — Project foundation (current)
+### Stage 0 — Project foundation
 
 **Purpose:** establish the Lean package and its first proof-checking loop.
 
@@ -122,13 +129,14 @@ sample derivations are accepted.
 **Status:** implemented; compilation still needs to be confirmed in a Lean
 installed environment.
 
-### Stage 1 — Logic completeness and checker behavior
+### Stage 1 — Logic completeness and checker behavior (in progress)
 
 **Purpose:** make the core rules precise and the checker easy to exercise.
 
 **Work to accomplish:**
 
-- Add negation and biconditional syntax with explicitly documented rules.
+- Add negation and biconditional abbreviations with explicitly documented
+  expansions.
 - Define a structured error type instead of returning only `none`, including
   errors for missing assumptions, wrong implication arguments, and invalid
   case branches.
