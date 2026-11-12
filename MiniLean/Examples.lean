@@ -24,9 +24,20 @@ def modusPonens : Proof :=
 def swapConjunction : Proof :=
   .impIntro (.and p q) <| .andIntro (.andRight (.hypothesis (.and p q))) (.andLeft (.hypothesis (.and p q)))
 
+/-- Negation is implication to falsehood, so the existing implication rule
+proves `P → ¬P` whenever `P` itself is falsehood. -/
+def falseImpliesNot : Proof :=
+  .impIntro .falsum <| .impIntro p <| .falseElim .falsum (.hypothesis .falsum)
+
+/-- The biconditional abbreviation exposes both directions as a conjunction. -/
+def iffReflexive : Proof :=
+  .impIntro p <| .andIntro (.impIntro p (.hypothesis p)) (.impIntro p (.hypothesis p))
+
 #eval check (.imp p p) identity
 #eval check (.imp (.imp p q) (.imp p q)) modusPonens
 #eval check (.imp (.and p q) (.and q p)) swapConjunction
+#eval check (.imp .falsum (.neg p)) falseImpliesNot
+#eval check (.imp p (.iff p p)) iffReflexive
 
 /-- A rejected term reports its missing local assumption. -/
 def missingHypothesis : Proof := .hypothesis q
