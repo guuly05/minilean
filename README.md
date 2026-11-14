@@ -126,14 +126,13 @@ documented, and covered by examples or properties.
 **Completion criteria:** `lake build` succeeds, the executable runs, and the
 sample derivations are accepted.
 
-**Status:** implemented; compilation still needs to be confirmed in a Lean
-installed environment.
+**Status:** implemented.
 
-### Stage 1 — Logic completeness and checker behavior (in progress)
+### Stage 1 — Logic completeness and checker behavior
 
 **Purpose:** make the core rules precise and the checker easy to exercise.
 
-**Work to accomplish:**
+**Work included:**
 
 - Add negation and biconditional abbreviations with explicitly documented
   expansions.
@@ -147,7 +146,11 @@ installed environment.
 **Completion criteria:** every core rule has positive and negative examples;
 invalid proofs report which rule failed; the behavior of contexts is specified.
 
-### Stage 2 — Formula and proof pretty-printing
+**Status:** implemented. `MiniLean/Examples.lean` covers every proof
+constructor and representative checker errors. Contexts permit duplicate
+assumptions, and lookup searches the whole list.
+
+### Stage 2 — Formula and proof pretty-printing (in progress)
 
 **Purpose:** make MiniLean terms readable before introducing source files.
 
