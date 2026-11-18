@@ -1,3 +1,5 @@
+import MiniLean.Core
+
 /-!
 # MiniLean.Checker
 
@@ -5,8 +7,6 @@ An executable type checker for MiniLean proof terms. `inferDetailed` reports
 why a proof term is malformed; the `infer` and `check` wrappers retain the
 small `Option` and `Bool` interface used by existing clients.
 -/
-
-import MiniLean.Core
 
 namespace MiniLean
 

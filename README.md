@@ -37,6 +37,7 @@ programming project and as a way to study how proof assistants are structured.
 - A `check` function that accepts a proof only when its inferred conclusion
   matches the requested theorem.
 - Example proof terms for identity, modus ponens, and conjunction swapping.
+- Precedence-aware formula rendering and compact proof-term rendering.
 
 ## Quick start
 
@@ -58,6 +59,14 @@ For diagnostics, use `inferDetailed` or `checkDetailed`. For example,
 `inferDetailed [] (.hypothesis (.atom 1))` returns a `missingAssumption`
 error. The simpler `infer` and `check` functions remain available when only
 acceptance or rejection is needed.
+
+Use `Formula.pretty` to render formulas with stable atom names (`P0`, `P1`,
+and so on), `⊥`, `→`, `∧`, and `∨`. Conjunction binds more tightly than
+disjunction, which binds more tightly than implication. Implication associates
+to the right, and parentheses are added where needed to preserve the formula's
+structure. `Proof.pretty` displays the proof constructors and their children
+compactly for inspection. `MiniLean/Examples.lean` includes evaluated samples
+of both renderers.
 
 Negation and biconditional are abbreviations in the core: `p.neg` means
 `p → false`, and `p.iff q` means `(p → q) ∧ (q → p)`. They introduce no
@@ -100,6 +109,7 @@ MiniLean uses these natural-deduction rules:
 MiniLean/
   Core.lean       Formula, context, and proof-term syntax
   Checker.lean    Executable inference and theorem checking
+  Pretty.lean     Formula and proof-term rendering
   Examples.lean   Sample proofs and evaluated checks
 Main.lean         Command-line entry point
 lakefile.toml     Lake package and targets
@@ -150,11 +160,11 @@ invalid proofs report which rule failed; the behavior of contexts is specified.
 constructor and representative checker errors. Contexts permit duplicate
 assumptions, and lookup searches the whole list.
 
-### Stage 2 — Formula and proof pretty-printing (in progress)
+### Stage 2 — Formula and proof pretty-printing
 
 **Purpose:** make MiniLean terms readable before introducing source files.
 
-**Work to accomplish:**
+**Work included:**
 
 - Print formulas with precedence-aware parentheses.
 - Assign stable display names to atomic proposition IDs.
@@ -163,6 +173,10 @@ assumptions, and lookup searches the whole list.
 
 **Completion criteria:** nested formulas render without ambiguity, and proof
 trees can be inspected from the command line or in Lean examples.
+
+**Status:** implemented. `Formula.pretty` uses stable atom names, precedence,
+and parentheses to preserve nested formula structure. `Proof.pretty` renders
+every proof constructor compactly, and examples exercise both functions.
 
 ### Stage 3 — Lexer and parser
 

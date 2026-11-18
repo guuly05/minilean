@@ -1,10 +1,11 @@
+import MiniLean.Pretty
+import MiniLean.Checker
+
 /-!
 # MiniLean.Examples
 
 Some proof terms built from MiniLean's primitive rules.
 -/
-
-import MiniLean.Checker
 
 namespace MiniLean.Examples
 
@@ -34,9 +35,10 @@ def falseImpliesNot : Proof :=
 def iffReflexive : Proof :=
   .impIntro p <| .andIntro (.impIntro p (.hypothesis p)) (.impIntro p (.hypothesis p))
 
-/-- Introduce the left side of a disjunction, then eliminate it by cases. -/
-def orIdentity : Proof :=
-  .impIntro p <| .orElim (.orLeft q (.hypothesis p)) p (.hypothesis p) q (.hypothesis q)
+/-- Swap the sides of a disjunction by eliminating it and rebuilding it. -/
+def swapDisjunction : Proof :=
+  .impIntro (.or p q) <|
+    .orElim (.hypothesis (.or p q)) p (.orRight q (.hypothesis p)) q (.orLeft p (.hypothesis q))
 
 /-- Falsehood can be eliminated to any target formula. -/
 def explosion : Proof :=
@@ -47,14 +49,18 @@ def explosion : Proof :=
 #eval check (.imp (.and p q) (.and q p)) swapConjunction
 #eval check (.imp .falsum (.neg p)) falseImpliesNot
 #eval check (.imp p (.iff p p)) iffReflexive
-#eval check (.imp p (.or p q)) orIdentity
+#eval check (.imp (.or p q) (.or q p)) swapDisjunction
 #eval check (.imp .falsum r) explosion
 
-/-- Context lookup works for any member, not only the first assumption. -/
+-- Pretty-printing keeps nested formulas unambiguous and proof constructors visible.
+#eval Formula.pretty (.imp (.or p q) (.and p (.imp q r)))
+#eval Proof.pretty swapConjunction
+
+-- Context lookup works for any member, not only the first assumption.
 #eval inferDetailed [p, q] (.hypothesis q)
 
-/-- Extending with an existing assumption is permitted and preserves lookup. -/
-#eval inferDetailed ([p] : Context).extend p (.hypothesis p)
+-- Extending with an existing assumption is permitted and preserves lookup.
+#eval inferDetailed (Context.extend [p] p) (.hypothesis p)
 
 /-- A rejected term reports its missing local assumption. -/
 def missingHypothesis : Proof := .hypothesis q
