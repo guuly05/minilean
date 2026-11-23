@@ -1,5 +1,6 @@
 import MiniLean.Pretty
 import MiniLean.Checker
+import MiniLean.Parser
 
 /-!
 # MiniLean.Examples
@@ -55,6 +56,16 @@ def explosion : Proof :=
 -- Pretty-printing keeps nested formulas unambiguous and proof constructors visible.
 #eval Formula.pretty (.imp (.or p q) (.and p (.imp q r)))
 #eval Proof.pretty swapConjunction
+
+-- The source parser accepts formula and proof output from the pretty printer.
+#eval parseFormula (Formula.pretty (.imp (.or p q) (.and p (.imp q r))))
+#eval parseFormula (Formula.pretty (.and (.and p q) r))
+#eval parseFormula (Formula.pretty (.and p (.and q r)))
+#eval parseFormula (Formula.pretty (.imp (.imp p q) r))
+#eval parseProof (Proof.pretty swapConjunction)
+#eval parseProof (Proof.pretty swapDisjunction)
+#eval lex "P0 ∧\n  @P1"
+#eval parseFormula "P0 → (P1"
 
 -- Context lookup works for any member, not only the first assumption.
 #eval inferDetailed [p, q] (.hypothesis q)

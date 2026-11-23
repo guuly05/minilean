@@ -183,17 +183,29 @@ every proof constructor compactly, and examples exercise both functions.
 **Purpose:** allow users to write MiniLean source instead of constructing Lean
 datatypes by hand.
 
-**Work to accomplish:**
+**Implemented:**
 
-- Specify a small textual grammar for formulas, contexts, and proof terms.
-- Implement tokenization with source positions.
-- Parse formulas and proof expressions with clear precedence rules.
-- Report malformed tokens, missing delimiters, and unexpected input with line
-  and column information.
-- Add examples of valid and invalid source snippets.
+- Tokenize formulas and proof terms with one-based source positions.
+- Parse formulas (`P0`, `false`, parentheses, `∧`, `∨`, and `→` or `->`)
+  using the precedence `∧` then `∨` then `→`; conjunction and disjunction
+  associate to the left, while implication associates to the right.
+- Parse the proof forms emitted by `Proof.pretty`: `hyp`, `intro`, `apply`,
+  `pair`, `left`, `right`, `inl`, `inr`, `cases`, and `absurd`.
+- Report unexpected characters, malformed atoms, missing delimiters, unknown
+  proof forms, and trailing input with line and column coordinates.
+- Include successful parse examples and an invalid-character lexer example in
+  `MiniLean/Examples.lean`.
 
-**Completion criteria:** documented source files parse deterministically, and
-syntax errors identify where parsing failed.
+**Completion criteria:** documented source snippets parse deterministically,
+and syntax errors identify where parsing failed. The current parser handles
+formulas and proof terms; declarations, contexts, and file-level syntax remain
+part of Stage 4.
+
+Formula and proof text can be parsed in Lean with `MiniLean.parseFormula` and
+`MiniLean.parseProof`. For example, `P0 → (P1 ∧ P2)` parses as a formula, while
+`intro P0 => hyp(P0)` parses as a proof term. The proof notation follows the
+constructors shown by `Proof.pretty`, including `cases` for disjunction
+elimination.
 
 ### Stage 4 — Source files and command-line checker
 
