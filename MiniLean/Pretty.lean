@@ -14,11 +14,11 @@ private def Formula.renderPrec : Formula → Nat → String
   | .imp left right, prec =>
       let rendered := s!"{Formula.renderPrec left 2} → {Formula.renderPrec right 1}"
       if prec > 1 then s!"({rendered})" else rendered
-  | .and left right, prec =>
-      let rendered := s!"{Formula.renderPrec left 3} ∧ {Formula.renderPrec right 3}"
-      if prec > 2 then s!"({rendered})" else rendered
   | .or left right, prec =>
-      let rendered := s!"{Formula.renderPrec left 4} ∨ {Formula.renderPrec right 4}"
+      let rendered := s!"{Formula.renderPrec left 2} ∨ {Formula.renderPrec right 3}"
+      if prec > 2 then s!"({rendered})" else rendered
+  | .and left right, prec =>
+      let rendered := s!"{Formula.renderPrec left 3} ∧ {Formula.renderPrec right 4}"
       if prec > 3 then s!"({rendered})" else rendered
 
 /-- Render a formula using `P<n>` atom names and precedence-aware Unicode operators.
