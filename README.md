@@ -10,9 +10,9 @@ implementation, while MiniLean's own checker validates proof terms in the
 MiniLean language. This separation makes the project useful both as a Lean
 programming project and as a way to study how proof assistants are structured.
 
-> **Project status:** early prototype. The core syntax and first checker rules
-> are present. The parser, interactive proof language, tactics, and larger
-> theorem library are planned work.
+> **Project status:** early prototype. The core syntax, parser, and command
+> line source checker are present. Interactive proof scripts, tactics, and a
+> larger theorem library are planned work.
 
 ## Goals
 
@@ -111,6 +111,7 @@ MiniLean/
   Checker.lean    Executable inference and theorem checking
   Pretty.lean     Formula and proof-term rendering
   Examples.lean   Sample proofs and evaluated checks
+  Source.lean     Theorem declaration parsing and checking
 Main.lean         Command-line entry point
 lakefile.toml     Lake package and targets
 lean-toolchain    Pinned Lean version
@@ -211,16 +212,28 @@ elimination.
 
 **Purpose:** make MiniLean useful as a standalone command-line tool.
 
-**Work to accomplish:**
+**Implemented:**
 
-- Define a file format for declarations, assumptions, goals, and proofs.
-- Extend the executable to accept file paths and check declarations.
-- Print readable success or failure results, including source locations.
-- Choose meaningful process exit codes for accepted and rejected files.
-- Add help and usage output.
+- A line-oriented theorem declaration format with formula and proof terms.
+- A command-line executable that reads and checks source files.
+- Readable acceptance and rejection output, with line and column locations
+  for syntax errors.
+- Nonzero exit status for invalid command lines, source errors, and rejected
+  theorems, plus `--help` usage output.
 
-**Completion criteria:** users can run MiniLean on a file and get a clear
-result without editing `Main.lean`.
+**Status:** implemented. Save declarations such as the following in a `.ml`
+file and run `lake exe minilean examples.ml`:
+
+```text
+-- Each declaration occupies one line.
+theorem identity : P0 → P0 := intro P0 => hyp(P0)
+```
+
+The grammar is `theorem NAME : FORMULA := PROOF`; blank lines and lines
+beginning with `--` are ignored. Names use letters, digits, and underscores
+and cannot begin with a digit. Each declaration is checked by the same core
+checker used by Lean examples. Source formula and proof syntax is documented
+in Stage 3 above.
 
 ### Stage 5 — Proof scripts and basic tactics
 
