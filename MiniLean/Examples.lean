@@ -1,6 +1,7 @@
 import MiniLean.Pretty
 import MiniLean.Checker
 import MiniLean.Parser
+import MiniLean.Tactic
 
 /-!
 # MiniLean.Examples
@@ -45,6 +46,27 @@ def swapDisjunction : Proof :=
 def explosion : Proof :=
   .impIntro .falsum <| .falseElim r (.hypothesis .falsum)
 
+/-- A structured tactic script proves identity by introducing then assuming. -/
+def tacticIdentity : Except TacticError Proof :=
+  solve (.imp p p) (.intro .assumption)
+
+/-- `apply` creates the premise goal, which `assumption` solves. -/
+def tacticModusPonens : Except TacticError Proof :=
+  solve (.imp (.imp p q) (.imp p q)) <|
+    .intro (.intro (.apply (.hypothesis (.imp p q)) .assumption))
+
+/-- Conjunction tactics solve each side under the introduced pair assumption. -/
+def tacticSwapConjunction : Except TacticError Proof :=
+  solve (.imp (.and p q) (.and q p)) <|
+    .intro (.andIntro
+      (.andRight (.hypothesis (.and p q)))
+      (.andLeft (.hypothesis (.and p q))))
+
+/-- Conjunction introduction closes two goals using nested assumptions. -/
+def tacticConjunctionIntro : Except TacticError Proof :=
+  solve (.imp p (.imp q (.and p q))) <|
+    .intro (.intro (.andIntro .assumption .assumption))
+
 #eval check (.imp p p) identity
 #eval check (.imp (.imp p q) (.imp p q)) modusPonens
 #eval check (.imp (.and p q) (.and q p)) swapConjunction
@@ -52,6 +74,13 @@ def explosion : Proof :=
 #eval check (.imp p (.iff p p)) iffReflexive
 #eval check (.imp (.or p q) (.or q p)) swapDisjunction
 #eval check (.imp .falsum r) explosion
+#eval tacticIdentity
+#eval tacticModusPonens
+#eval tacticSwapConjunction
+#eval tacticConjunctionIntro
+#eval Tactic.goalPretty [.and p q] q
+#eval solve q .assumption
+#eval solve (.and p q) (.andIntro .assumption .assumption)
 
 -- Pretty-printing keeps nested formulas unambiguous and proof constructors visible.
 #eval Formula.pretty (.imp (.or p q) (.and p (.imp q r)))
