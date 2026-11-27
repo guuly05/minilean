@@ -38,6 +38,8 @@ programming project and as a way to study how proof assistants are structured.
   matches the requested theorem.
 - Example proof terms for identity, modus ponens, and conjunction swapping.
 - Precedence-aware formula rendering and compact proof-term rendering.
+- Structured proof scripts with `intro`, `exact`, `apply`, `assumption`, and
+  conjunction introduction and projection tactics.
 
 ## Quick start
 
@@ -112,6 +114,7 @@ MiniLean/
   Pretty.lean     Formula and proof-term rendering
   Examples.lean   Sample proofs and evaluated checks
   Source.lean     Theorem declaration parsing and checking
+  Tactic.lean    Structured tactic scripts and proof-term generation
 Main.lean         Command-line entry point
 lakefile.toml     Lake package and targets
 lean-toolchain    Pinned Lean version
@@ -239,17 +242,23 @@ in Stage 3 above.
 
 **Purpose:** reduce the amount of proof-term syntax users need to write.
 
-**Work to accomplish:**
+**Implemented:**
 
-- Design a small tactic/script syntax.
-- Implement `intro`, `exact`, `apply`, `assumption`, and conjunction tactics.
-- Track and display the current goal and local context.
-- Translate successful tactic scripts to proof terms, then pass those terms
-  through the same checker.
-- Explain failed tactic steps without weakening the checker.
+- Define a structured tactic language whose branching forms contain one child
+  script per subgoal.
+- Implement `intro`, `exact`, `apply`, `assumption`, conjunction introduction,
+  and conjunction projections.
+- Display the current goal and local assumptions with `Tactic.goalPretty`.
+- Translate successful scripts to proof terms and check the final result with
+  the same core checker.
+- Return structured errors for missing assumptions, mismatched goals, and
+  invalid tactic applications.
 
-**Completion criteria:** representative propositional theorems can be proved
-with scripts, and generated terms are checked by the core.
+**Status:** implemented. Scripts are built as values of `MiniLean.Tactic`;
+for example, `Tactic.intro Tactic.assumption` proves `P0 → P0`. The
+`MiniLean/Examples.lean` module includes scripts for identity, modus ponens,
+and conjunction swapping. The tactic language produces ordinary `Proof`
+terms, and `solve` checks each generated term against the requested goal.
 
 ### Stage 6 — Soundness connection
 
